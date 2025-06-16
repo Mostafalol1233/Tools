@@ -965,7 +965,7 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
       "gpa-calculator": "حاسبة المعدل التراكمي",
       "unit-converter": "محول الوحدات",
       "password-generator": "مولد كلمات المرور",
-      "qr-generator": "مولد رمز QR",
+      "text-encoder": "مشفر النصوص",
       "color-palette": "منتقي الألوان"
     };
     return titles[toolId as keyof typeof titles] || "أداة حسابية";
