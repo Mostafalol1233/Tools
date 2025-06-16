@@ -115,6 +115,7 @@ const tools: Tool[] = [
 
 export default function Home() {
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const { t, language, setLanguage } = useLanguage();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -123,7 +124,7 @@ export default function Home() {
         <div className="container mx-auto px-4 text-center">
           <div className="bg-white rounded-lg p-4 shadow-sm border-2 border-dashed border-gray-300">
             <i className="fas fa-ad text-gray-400 text-2xl mb-2"></i>
-            <p className="text-gray-500 text-sm">منطقة إعلانية - يمكن وضع Google AdSense هنا</p>
+            <p className="text-gray-500 text-sm">{t('ads.text')}</p>
           </div>
         </div>
       </div>
@@ -131,12 +132,24 @@ export default function Home() {
       {/* Header */}
       <header className="bg-white shadow-lg sticky top-0 z-40">
         <div className="container mx-auto px-4 py-6">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-slate-800 mb-2 animate-slide-up">
-              <i className="fas fa-calculator text-blue-500 ml-3"></i>
-              أدوات حسابية يومية
-            </h1>
-            <p className="text-slate-600 text-lg">مجموعة شاملة من الأدوات الحسابية المجانية للاستخدام اليومي</p>
+          <div className="flex justify-between items-center">
+            <div className="text-center flex-1">
+              <h1 className="text-4xl font-bold text-slate-800 mb-2 animate-slide-up">
+                <i className="fas fa-calculator text-blue-500 ml-3"></i>
+                {t('site.title')}
+              </h1>
+              <p className="text-slate-600 text-lg">{t('site.description')}</p>
+            </div>
+            
+            {/* Language Toggle */}
+            <Button
+              onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <i className="fas fa-language"></i>
+              {t('lang.switch')}
+            </Button>
           </div>
         </div>
       </header>
@@ -146,7 +159,7 @@ export default function Home() {
         
         {/* Tools Grid */}
         <section className="mb-12">
-          <h2 className="text-2xl font-semibold text-slate-800 mb-6 text-center">اختر الأداة المناسبة لك</h2>
+          <h2 className="text-2xl font-semibold text-slate-800 mb-6 text-center">{t('tools.select')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {tools.map((tool) => (

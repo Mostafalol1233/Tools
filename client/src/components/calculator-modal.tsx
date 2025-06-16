@@ -651,6 +651,211 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
           </div>
         );
 
+      case "unit-converter":
+        return (
+          <div className="space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const value = parseFloat(formData.get("value") as string);
+              const category = formData.get("category") as string;
+              const fromUnit = formData.get("fromUnit") as string;
+              const toUnit = formData.get("toUnit") as string;
+              
+              if (isNaN(value)) {
+                alert("يرجى إدخال قيمة صحيحة");
+                return;
+              }
+              
+              const conversionResult = convertUnits(value, fromUnit, toUnit, category);
+              setResult(conversionResult);
+            }} className="space-y-4">
+              <div>
+                <Label>فئة التحويل</Label>
+                <Select name="category" defaultValue="length">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="length">الطول</SelectItem>
+                    <SelectItem value="weight">الوزن</SelectItem>
+                    <SelectItem value="temperature">درجة الحرارة</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>القيمة</Label>
+                <Input type="number" name="value" placeholder="1" required />
+              </div>
+              <Button type="submit" className="w-full">تحويل</Button>
+            </form>
+            {result && !result.error && (
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="text-2xl font-bold text-cyan-600 mb-2">{result.result}</div>
+                  <p className="text-cyan-700">{result.fromValue} {result.fromUnit} = {result.result} {result.toUnit}</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        );
+
+      case "password-generator":
+        return (
+          <div className="space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const length = parseInt(formData.get("length") as string) || 12;
+              const options = {
+                uppercase: formData.get("uppercase") === "on",
+                lowercase: formData.get("lowercase") === "on" || true,
+                numbers: formData.get("numbers") === "on",
+                symbols: formData.get("symbols") === "on"
+              };
+              
+              const passwordResult = generatePassword(length, options);
+              setResult(passwordResult);
+            }} className="space-y-4">
+              <div>
+                <Label>طول كلمة المرور</Label>
+                <Input type="number" name="length" min="4" max="50" defaultValue="12" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <input type="checkbox" name="uppercase" id="uppercase" defaultChecked />
+                  <Label htmlFor="uppercase">أحرف كبيرة (A-Z)</Label>
+                </div>
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <input type="checkbox" name="lowercase" id="lowercase" defaultChecked />
+                  <Label htmlFor="lowercase">أحرف صغيرة (a-z)</Label>
+                </div>
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <input type="checkbox" name="numbers" id="numbers" defaultChecked />
+                  <Label htmlFor="numbers">أرقام (0-9)</Label>
+                </div>
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <input type="checkbox" name="symbols" id="symbols" />
+                  <Label htmlFor="symbols">رموز (!@#$%)</Label>
+                </div>
+              </div>
+              <Button type="submit" className="w-full">إنشاء كلمة مرور</Button>
+            </form>
+            {result && !result.error && (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                    <div className="font-mono text-lg text-center break-all">{result.password}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-lg font-semibold ${
+                      result.strength >= 80 ? 'text-green-600' :
+                      result.strength >= 60 ? 'text-blue-600' :
+                      result.strength >= 40 ? 'text-yellow-600' : 'text-red-600'
+                    }`}>
+                      قوة كلمة المرور: {result.strengthText} ({result.strength}%)
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="mt-3"
+                      onClick={() => navigator.clipboard.writeText(result.password)}
+                    >
+                      <i className="fas fa-copy ml-2"></i>
+                      نسخ كلمة المرور
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        );
+
+      case "qr-generator":
+        return (
+          <div className="space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const text = formData.get("text") as string;
+              
+              if (!text.trim()) {
+                alert("يرجى إدخال النص أو الرابط");
+                return;
+              }
+              
+              const qrResult = generateQRData(text);
+              setResult(qrResult);
+            }} className="space-y-4">
+              <div>
+                <Label>النص أو الرابط</Label>
+                <Input 
+                  name="text" 
+                  placeholder="https://example.com أو أي نص آخر" 
+                  required 
+                />
+              </div>
+              <Button type="submit" className="w-full">إنشاء رمز QR</Button>
+            </form>
+            {result && (
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="mb-4">
+                    <img src={result.dataUrl} alt="QR Code" className="mx-auto border rounded" />
+                  </div>
+                  <p className="text-violet-700 mb-2">تم إنشاء رمز QR للنص:</p>
+                  <p className="text-sm text-gray-600 break-all">{result.text}</p>
+                  <p className="text-xs text-violet-500 mt-3">{result.note}</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        );
+
+      case "color-palette":
+        return (
+          <div className="space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const color = formData.get("color") as string;
+              
+              setResult({ original: color, hex: color, rgb: convertColor(color, 'hex', 'rgb') });
+            }} className="space-y-4">
+              <div>
+                <Label>اختر لون</Label>
+                <input 
+                  type="color" 
+                  name="color" 
+                  defaultValue="#3b82f6"
+                  className="w-full h-12 rounded border"
+                />
+              </div>
+              <Button type="submit" className="w-full">عرض معلومات اللون</Button>
+            </form>
+            {result && (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3 space-x-reverse">
+                      <div 
+                        className="w-16 h-16 rounded border shadow-lg"
+                        style={{ backgroundColor: result.original }}
+                      ></div>
+                      <div>
+                        <p className="font-semibold">اللون المختار</p>
+                        <div className="text-sm space-y-1">
+                          <p><strong>Hex:</strong> {result.original}</p>
+                          <p><strong>RGB:</strong> {result.rgb}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        );
+
       default:
         return <div className="p-6"><p>الأداة غير متوفرة حالياً</p></div>;
     }
@@ -667,7 +872,11 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
       "date-difference": "حاسبة الفرق بين التواريخ",
       "tax-calculator": "حاسبة الضريبة",
       "sqrt-calculator": "حاسبة الجذر التربيعي",
-      "gpa-calculator": "حاسبة المعدل التراكمي"
+      "gpa-calculator": "حاسبة المعدل التراكمي",
+      "unit-converter": "محول الوحدات",
+      "password-generator": "مولد كلمات المرور",
+      "qr-generator": "مولد رمز QR",
+      "color-palette": "منتقي الألوان"
     };
     return titles[toolId as keyof typeof titles] || "أداة حسابية";
   };
