@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,11 @@ import {
   calculateDateDifference, 
   calculateTax, 
   calculateSquareRoot, 
-  calculateGPA 
+  calculateGPA,
+  convertUnits,
+  generatePassword,
+  generateQRData,
+  convertColor
 } from "@/lib/calculations";
 
 interface CalculatorModalProps {
@@ -114,6 +118,35 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
     setResult(randomResult);
   };
 
+  const playNotificationSound = () => {
+    // Create audio context for web audio API
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    
+    // Create a pleasant bell sound using oscillators
+    const createTone = (frequency: number, duration: number, delay: number = 0) => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + delay);
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime + delay);
+      gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + delay + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + delay + duration);
+      
+      oscillator.start(audioContext.currentTime + delay);
+      oscillator.stop(audioContext.currentTime + delay + duration);
+    };
+    
+    // Play a sequence of bell tones
+    createTone(523.25, 0.5, 0);    // C5
+    createTone(659.25, 0.5, 0.2);  // E5
+    createTone(783.99, 0.8, 0.4);  // G5
+  };
+
   const handleCountdown = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -139,6 +172,7 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
       if (distance < 0) {
         clearInterval(interval);
         setResult({ finished: true });
+        playNotificationSound();
         return;
       }
 
@@ -395,24 +429,65 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
               <Card>
                 <CardContent className="pt-6">
                   {result.finished ? (
-                    <div className="text-2xl font-bold text-indigo-600 text-center">انتهى الوقت! 🎉</div>
+                    <div className="text-center animate-bounce">
+                      <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                        <i className="fas fa-bell text-white text-4xl animate-pulse"></i>
+                      </div>
+                      <div className="text-2xl font-bold text-indigo-600 mb-2">انتهى الوقت!</div>
+                      <div className="text-lg text-purple-600">🎉 تم الانتهاء من العد التنازلي 🎉</div>
+                    </div>
                   ) : (
-                    <div className="grid grid-cols-4 gap-4 text-center">
-                      <div className="bg-indigo-50 rounded-lg p-3">
-                        <div className="text-xl font-bold text-indigo-600">{result.days}</div>
-                        <div className="text-xs text-gray-600">يوم</div>
+                    <div className="text-center">
+                      {/* Clock Design */}
+                      <div className="relative w-48 h-48 mx-auto mb-6">
+                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-full shadow-2xl border-8 border-indigo-300"></div>
+                        
+                        {/* Clock Numbers */}
+                        <div className="absolute inset-4 rounded-full border-2 border-indigo-400">
+                          {[12, 3, 6, 9].map((num, index) => (
+                            <div
+                              key={num}
+                              className={`absolute text-sm font-bold text-indigo-700 ${
+                                index === 0 ? 'top-2 left-1/2 transform -translate-x-1/2' :
+                                index === 1 ? 'right-2 top-1/2 transform -translate-y-1/2' :
+                                index === 2 ? 'bottom-2 left-1/2 transform -translate-x-1/2' :
+                                'left-2 top-1/2 transform -translate-y-1/2'
+                              }`}
+                            >
+                              {num}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Clock Hands */}
+                        <div className="absolute top-1/2 left-1/2 w-1 h-16 bg-indigo-600 origin-bottom transform -translate-x-1/2 -translate-y-full rounded-full animate-pulse"></div>
+                        <div className="absolute top-1/2 left-1/2 w-0.5 h-12 bg-indigo-800 origin-bottom transform -translate-x-1/2 -translate-y-full rounded-full"></div>
+                        <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-indigo-600 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
                       </div>
-                      <div className="bg-indigo-50 rounded-lg p-3">
-                        <div className="text-xl font-bold text-indigo-600">{result.hours}</div>
-                        <div className="text-xs text-gray-600">ساعة</div>
+
+                      {/* Time Display */}
+                      <div className="grid grid-cols-4 gap-3 mb-4">
+                        <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200 shadow-md">
+                          <div className="text-2xl font-bold text-indigo-600 mb-1">{result.days}</div>
+                          <div className="text-xs text-indigo-500 font-medium">يوم</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200 shadow-md">
+                          <div className="text-2xl font-bold text-blue-600 mb-1">{result.hours}</div>
+                          <div className="text-xs text-blue-500 font-medium">ساعة</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200 shadow-md">
+                          <div className="text-2xl font-bold text-purple-600 mb-1">{result.minutes}</div>
+                          <div className="text-xs text-purple-500 font-medium">دقيقة</div>
+                        </div>
+                        <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-4 border border-pink-200 shadow-md animate-pulse">
+                          <div className="text-2xl font-bold text-pink-600 mb-1">{result.seconds}</div>
+                          <div className="text-xs text-pink-500 font-medium">ثانية</div>
+                        </div>
                       </div>
-                      <div className="bg-indigo-50 rounded-lg p-3">
-                        <div className="text-xl font-bold text-indigo-600">{result.minutes}</div>
-                        <div className="text-xs text-gray-600">دقيقة</div>
-                      </div>
-                      <div className="bg-indigo-50 rounded-lg p-3">
-                        <div className="text-xl font-bold text-indigo-600">{result.seconds}</div>
-                        <div className="text-xs text-gray-600">ثانية</div>
+                      
+                      <div className="text-sm text-gray-600">
+                        <i className="fas fa-hourglass-half text-indigo-500 ml-2"></i>
+                        العد التنازلي جاري...
                       </div>
                     </div>
                   )}

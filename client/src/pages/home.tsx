@@ -80,6 +80,34 @@ const tools: Tool[] = [
     description: "احسب معدلك التراكمي GPA",
     icon: "fas fa-graduation-cap",
     color: "pink"
+  },
+  {
+    id: "unit-converter",
+    title: "محول الوحدات",
+    description: "تحويل بين وحدات القياس المختلفة",
+    icon: "fas fa-exchange-alt",
+    color: "cyan"
+  },
+  {
+    id: "password-generator",
+    title: "مولد كلمات المرور",
+    description: "إنشاء كلمات مرور قوية وآمنة",
+    icon: "fas fa-key",
+    color: "gray"
+  },
+  {
+    id: "qr-generator",
+    title: "مولد رمز QR",
+    description: "إنشاء رموز QR لأي نص أو رابط",
+    icon: "fas fa-qrcode",
+    color: "violet"
+  },
+  {
+    id: "color-palette",
+    title: "منتقي الألوان",
+    description: "اختيار الألوان وتحويل بين أنظمة الألوان",
+    icon: "fas fa-palette",
+    color: "rose"
   }
 ];
 

@@ -148,3 +148,170 @@ export function calculateGPA(courses: Array<{ grade: number; hours: number }>) {
     totalHours
   };
 }
+
+export function convertUnits(value: number, fromUnit: string, toUnit: string, category: string) {
+  const conversions: { [key: string]: { [key: string]: number } } = {
+    length: {
+      meter: 1,
+      kilometer: 0.001,
+      centimeter: 100,
+      millimeter: 1000,
+      inch: 39.3701,
+      foot: 3.28084,
+      yard: 1.09361
+    },
+    weight: {
+      kilogram: 1,
+      gram: 1000,
+      pound: 2.20462,
+      ounce: 35.274,
+      ton: 0.001
+    }
+  };
+
+  if (category === 'temperature') {
+    let result = value;
+    if (fromUnit === 'celsius' && toUnit === 'fahrenheit') {
+      result = (value * 9/5) + 32;
+    } else if (fromUnit === 'celsius' && toUnit === 'kelvin') {
+      result = value + 273.15;
+    } else if (fromUnit === 'fahrenheit' && toUnit === 'celsius') {
+      result = (value - 32) * 5/9;
+    } else if (fromUnit === 'fahrenheit' && toUnit === 'kelvin') {
+      result = ((value - 32) * 5/9) + 273.15;
+    } else if (fromUnit === 'kelvin' && toUnit === 'celsius') {
+      result = value - 273.15;
+    } else if (fromUnit === 'kelvin' && toUnit === 'fahrenheit') {
+      result = ((value - 273.15) * 9/5) + 32;
+    }
+    
+    return {
+      result: result.toFixed(2),
+      fromValue: value,
+      fromUnit,
+      toUnit
+    };
+  } else {
+    const categoryConversions = conversions[category];
+    if (categoryConversions && categoryConversions[fromUnit] && categoryConversions[toUnit]) {
+      const baseValue = value / categoryConversions[fromUnit];
+      const result = baseValue * categoryConversions[toUnit];
+      return {
+        result: result.toFixed(6),
+        fromValue: value,
+        fromUnit,
+        toUnit
+      };
+    }
+  }
+
+  return { error: 'تحويل غير مدعوم' };
+}
+
+export function generatePassword(length: number, options: { uppercase: boolean; lowercase: boolean; numbers: boolean; symbols: boolean }) {
+  const chars = {
+    uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lowercase: 'abcdefghijklmnopqrstuvwxyz',
+    numbers: '0123456789',
+    symbols: '!@#$%^&*()_+-=[]{}|;:,.<>?'
+  };
+
+  let characterPool = '';
+  if (options.uppercase) characterPool += chars.uppercase;
+  if (options.lowercase) characterPool += chars.lowercase;
+  if (options.numbers) characterPool += chars.numbers;
+  if (options.symbols) characterPool += chars.symbols;
+
+  if (!characterPool) {
+    return { error: 'يجب اختيار نوع واحد على الأقل من الأحرف' };
+  }
+
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += characterPool.charAt(Math.floor(Math.random() * characterPool.length));
+  }
+
+  // Calculate password strength
+  let strength = 0;
+  if (password.length >= 8) strength += 25;
+  if (password.length >= 12) strength += 25;
+  if (/[A-Z]/.test(password)) strength += 12.5;
+  if (/[a-z]/.test(password)) strength += 12.5;
+  if (/[0-9]/.test(password)) strength += 12.5;
+  if (/[^A-Za-z0-9]/.test(password)) strength += 12.5;
+
+  const strengthText = strength >= 80 ? 'قوية جداً' : 
+                      strength >= 60 ? 'قوية' : 
+                      strength >= 40 ? 'متوسطة' : 'ضعيفة';
+
+  return {
+    password,
+    strength: Math.round(strength),
+    strengthText,
+    length: password.length
+  };
+}
+
+export function generateQRData(text: string) {
+  // Simple QR placeholder - in production you'd use a QR library
+  return {
+    text,
+    dataUrl: `data:image/svg+xml;base64,${btoa(`
+      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="200" height="200" fill="white"/>
+        <text x="100" y="100" text-anchor="middle" font-size="12" fill="black">QR Code</text>
+        <text x="100" y="120" text-anchor="middle" font-size="10" fill="gray">${text.slice(0, 20)}</text>
+      </svg>
+    `)}`,
+    note: 'هذا مثال توضيحي - في التطبيق الحقيقي سيتم استخدام مكتبة QR مخصصة'
+  };
+}
+
+export function convertColor(color: string, fromFormat: string, toFormat: string) {
+  // Basic color conversion functions
+  const hexToRgb = (hex: string) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  };
+
+  const rgbToHex = (r: number, g: number, b: number) => {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  };
+
+  const rgbToHsl = (r: number, g: number, b: number) => {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+
+    if (max === min) {
+      h = s = 0;
+    } else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+        default: h = 0;
+      }
+      h /= 6;
+    }
+
+    return {
+      h: Math.round(h * 360),
+      s: Math.round(s * 100),
+      l: Math.round(l * 100)
+    };
+  };
+
+  if (fromFormat === 'hex' && toFormat === 'rgb') {
+    const rgb = hexToRgb(color);
+    return rgb ? `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` : 'خطأ في التحويل';
+  }
+
+  return 'تحويل غير مدعوم حالياً';
+}

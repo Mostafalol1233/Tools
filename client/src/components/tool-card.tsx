@@ -22,6 +22,10 @@ const colorClasses = {
   green: "bg-green-100 hover:bg-green-200 text-green-600",
   orange: "bg-orange-100 hover:bg-orange-200 text-orange-600",
   pink: "bg-pink-100 hover:bg-pink-200 text-pink-600",
+  cyan: "bg-cyan-100 hover:bg-cyan-200 text-cyan-600",
+  gray: "bg-gray-100 hover:bg-gray-200 text-gray-600",
+  violet: "bg-violet-100 hover:bg-violet-200 text-violet-600",
+  rose: "bg-rose-100 hover:bg-rose-200 text-rose-600",
 };
 
 export default function ToolCard({ tool, onClick }: ToolCardProps) {
