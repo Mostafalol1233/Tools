@@ -19,7 +19,9 @@ import {
   generatePassword,
   encodeText,
   decodeText,
-  convertColor
+  convertColor,
+  generateDetectorCode,
+  validateDetectorCode
 } from "@/lib/calculations";
 
 interface CalculatorModalProps {
@@ -857,6 +859,7 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
                     <SelectItem value="base64">Base64</SelectItem>
                     <SelectItem value="reverse">عكس النص</SelectItem>
                     <SelectItem value="atbash">أتباش (Atbash)</SelectItem>
+                    <SelectItem value="bmo">🔥 BMO - تشفير متقدم</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -869,12 +872,77 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
                   <SelectContent>
                     <SelectItem value="encode">تشفير</SelectItem>
                     <SelectItem value="decode">فك التشفير</SelectItem>
+                    <SelectItem value="auto">🔍 كاشف تلقائي</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <Button type="submit" className="w-full">معالجة النص</Button>
             </form>
-            {result && (
+            
+            {/* قسم إدارة أكواد الكاشف التلقائي */}
+            <div className="border-t pt-4 mt-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-semibold text-violet-800">إدارة الكاشف التلقائي</h3>
+                <Button 
+                  size="sm" 
+                  variant="secondary"
+                  onClick={() => {
+                    const code = generateDetectorCode();
+                    setResult({ type: 'detector-code', code, isValid: true });
+                  }}
+                >
+                  إنشاء كود جديد
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 gap-3">
+                <Input 
+                  placeholder="أدخل كود التفعيل (DTC-xxxxxx-xxxx)"
+                  onBlur={(e) => {
+                    const code = e.target.value;
+                    if (code && code.startsWith('DTC-')) {
+                      const isValid = validateDetectorCode(code);
+                      setResult({ type: 'detector-validation', code, isValid });
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            {result && result.type === 'detector-code' && (
+              <Card className="border-green-200 bg-green-50">
+                <CardContent className="pt-6">
+                  <div className="text-center space-y-3">
+                    <div className="text-green-800 font-semibold">تم إنشاء كود تفعيل جديد</div>
+                    <div className="bg-white p-3 rounded border font-mono text-lg">{result.code}</div>
+                    <p className="text-sm text-green-700">احفظ هذا الكود لاستخدام الكاشف التلقائي</p>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigator.clipboard.writeText(result.code)}
+                    >
+                      نسخ الكود
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {result && result.type === 'detector-validation' && (
+              <Card className={result.isValid ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className={`font-semibold ${result.isValid ? 'text-green-800' : 'text-red-800'}`}>
+                      {result.isValid ? '✓ كود صحيح ومفعل' : '✗ كود غير صحيح'}
+                    </div>
+                    <p className={`text-sm mt-2 ${result.isValid ? 'text-green-700' : 'text-red-700'}`}>
+                      {result.isValid ? 'يمكنك الآن استخدام الكاشف التلقائي' : 'تحقق من صحة الكود المدخل'}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {result && result.original && (
               <Card>
                 <CardContent className="pt-6">
                   <div className="space-y-4">
@@ -883,9 +951,22 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
                       <div className="bg-gray-50 p-3 rounded border text-sm break-all">{result.original}</div>
                     </div>
                     <div>
-                      <Label className="text-sm font-semibold text-violet-700">النتيجة ({result.method} - {result.operation === 'encode' ? 'تشفير' : 'فك تشفير'}):</Label>
-                      <div className="bg-violet-50 p-3 rounded border text-sm break-all font-mono">{result.processed}</div>
+                      <Label className="text-sm font-semibold text-violet-700">
+                        النتيجة ({result.method} - {result.operation === 'encode' ? 'تشفير' : result.operation === 'auto' ? 'كاشف تلقائي' : 'فك تشفير'}):
+                      </Label>
+                      <div className="bg-violet-50 p-3 rounded border text-sm break-all font-mono whitespace-pre-wrap">{result.processed}</div>
                     </div>
+                    {result.method === 'bmo' && result.operation === 'encode' && (
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                        <div className="flex items-center space-x-2 space-x-reverse">
+                          <div className="text-orange-600 font-semibold">🔥 تشفير BMO المتقدم</div>
+                        </div>
+                        <p className="text-sm text-orange-700 mt-2">
+                          تم تطبيق 5 مراحل تشفير متقدمة تشمل التشويش الزمني والتشفير المتعدد المستويات. 
+                          هذا التشفير من أصعب التشفيرات في العالم ويتطلب معرفة خاصة لفكه.
+                        </p>
+                      </div>
+                    )}
                     <Button 
                       variant="outline" 
                       className="w-full"
