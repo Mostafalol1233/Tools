@@ -1,0 +1,225 @@
+import { useState } from "react";
+import ToolCard from "@/components/tool-card";
+import CalculatorModal from "@/components/calculator-modal";
+
+interface Tool {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
+const tools: Tool[] = [
+  {
+    id: "age-calculator",
+    title: "حاسبة العمر",
+    description: "احسب عمرك بدقة بالسنوات والشهور والأيام",
+    icon: "fas fa-birthday-cake",
+    color: "blue"
+  },
+  {
+    id: "date-converter",
+    title: "تحويل التاريخ",
+    description: "تحويل بين التاريخ الهجري والميلادي",
+    icon: "fas fa-calendar-alt",
+    color: "emerald"
+  },
+  {
+    id: "bmi-calculator",
+    title: "حاسبة BMI",
+    description: "احسب مؤشر كتلة الجسم والوزن المثالي",
+    icon: "fas fa-weight",
+    color: "amber"
+  },
+  {
+    id: "percentage-calculator",
+    title: "حاسبة النسبة المئوية",
+    description: "احسب النسب المئوية بطرق مختلفة",
+    icon: "fas fa-percentage",
+    color: "purple"
+  },
+  {
+    id: "random-generator",
+    title: "مولد الأرقام العشوائية",
+    description: "توليد أرقام عشوائية بين رقمين",
+    icon: "fas fa-dice",
+    color: "red"
+  },
+  {
+    id: "countdown-timer",
+    title: "عداد تنازلي",
+    description: "عداد تنازلي لأي تاريخ أو وقت",
+    icon: "fas fa-clock",
+    color: "indigo"
+  },
+  {
+    id: "date-difference",
+    title: "الفرق بين التواريخ",
+    description: "احسب الفرق بين تاريخين بالأيام",
+    icon: "fas fa-calendar-check",
+    color: "teal"
+  },
+  {
+    id: "tax-calculator",
+    title: "حاسبة الضريبة",
+    description: "احسب السعر بعد إضافة الضريبة",
+    icon: "fas fa-money-bill",
+    color: "green"
+  },
+  {
+    id: "sqrt-calculator",
+    title: "حاسبة الجذر التربيعي",
+    description: "احسب الجذر التربيعي لأي رقم",
+    icon: "fas fa-square-root-alt",
+    color: "orange"
+  },
+  {
+    id: "gpa-calculator",
+    title: "حاسبة المعدل التراكمي",
+    description: "احسب معدلك التراكمي GPA",
+    icon: "fas fa-graduation-cap",
+    color: "pink"
+  }
+];
+
+export default function Home() {
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Advertisement Area Top */}
+      <div className="bg-gray-100 border-b border-gray-200 py-2">
+        <div className="container mx-auto px-4 text-center">
+          <div className="bg-white rounded-lg p-4 shadow-sm border-2 border-dashed border-gray-300">
+            <i className="fas fa-ad text-gray-400 text-2xl mb-2"></i>
+            <p className="text-gray-500 text-sm">منطقة إعلانية - يمكن وضع Google AdSense هنا</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Header */}
+      <header className="bg-white shadow-lg sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-slate-800 mb-2 animate-slide-up">
+              <i className="fas fa-calculator text-blue-500 ml-3"></i>
+              أدوات حسابية يومية
+            </h1>
+            <p className="text-slate-600 text-lg">مجموعة شاملة من الأدوات الحسابية المجانية للاستخدام اليومي</p>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        
+        {/* Tools Grid */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold text-slate-800 mb-6 text-center">اختر الأداة المناسبة لك</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {tools.map((tool) => (
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                onClick={() => setSelectedTool(tool.id)}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Advertisement Area Middle */}
+        <div className="mb-12">
+          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-dashed border-gray-300 text-center">
+            <i className="fas fa-ad text-gray-400 text-3xl mb-3"></i>
+            <p className="text-gray-500">منطقة إعلانية وسطى - مساحة 728x90</p>
+          </div>
+        </div>
+
+      </main>
+
+      {/* About Section */}
+      <section id="about" className="bg-white py-12 border-t border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-slate-800 mb-6">من نحن</h2>
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+              <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <i className="fas fa-user text-white text-4xl"></i>
+              </div>
+              <h3 className="text-2xl font-semibold text-slate-800 mb-2">مصطفى</h3>
+              <p className="text-blue-600 font-medium mb-4">مطور ويب ومصمم واجهات</p>
+              <p className="text-slate-600 leading-relaxed mb-6">
+                مرحباً! أنا مصطفى، مطور ويب متخصص في إنشاء أدوات مفيدة وعملية للمستخدمين العرب. 
+                أسعى لتقديم حلول تقنية بسيطة وفعالة تساعد في الحياة اليومية.
+              </p>
+              <div className="flex justify-center space-x-4 space-x-reverse">
+                <a href="https://mustaf.vercel.app/" target="_blank" rel="noopener noreferrer"
+                   className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center">
+                  <i className="fas fa-globe ml-2"></i>
+                  زيارة موقعي الشخصي
+                </a>
+                <a href="#" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-lg transition-colors duration-200 flex items-center">
+                  <i className="fas fa-tree ml-2"></i>
+                  Linktree
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="bg-slate-800 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">اتصل بنا</h2>
+            <p className="text-slate-300 mb-8">هل لديك اقتراح لأداة جديدة أو تحسين؟ نحن نحب سماع آرائكم!</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors">
+                <i className="fas fa-envelope text-blue-400 text-2xl mb-3"></i>
+                <h3 className="font-semibold mb-2">البريد الإلكتروني</h3>
+                <p className="text-slate-300 text-sm">contact@mustaf.vercel.app</p>
+              </div>
+              <div className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors">
+                <i className="fas fa-code text-green-400 text-2xl mb-3"></i>
+                <h3 className="font-semibold mb-2">GitHub</h3>
+                <p className="text-slate-300 text-sm">تابع مشاريعنا المفتوحة</p>
+              </div>
+              <div className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors">
+                <i className="fas fa-comments text-purple-400 text-2xl mb-3"></i>
+                <h3 className="font-semibold mb-2">الملاحظات</h3>
+                <p className="text-slate-300 text-sm">شاركنا تجربتك واقتراحاتك</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white py-8">
+        <div className="container mx-auto px-4 text-center">
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold mb-2">أدوات حسابية يومية</h3>
+            <p className="text-slate-400">أدوات مجانية ومفيدة للجميع</p>
+          </div>
+          <div className="border-t border-slate-700 pt-4">
+            <p className="text-slate-400 text-sm">
+              &copy; 2024 جميع الحقوق محفوظة | تم التطوير بواسطة 
+              <a href="https://mustaf.vercel.app/" className="text-blue-400 hover:text-blue-300 mr-1">مصطفى</a>
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* Calculator Modal */}
+      {selectedTool && (
+        <CalculatorModal
+          toolId={selectedTool}
+          onClose={() => setSelectedTool(null)}
+        />
+      )}
+    </div>
+  );
+}
