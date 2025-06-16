@@ -1,11 +1,13 @@
 import { useState } from "react";
 import ToolCard from "@/components/tool-card";
 import CalculatorModal from "@/components/calculator-modal";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
 
 interface Tool {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descKey: string;
   icon: string;
   color: string;
 }
@@ -13,99 +15,99 @@ interface Tool {
 const tools: Tool[] = [
   {
     id: "age-calculator",
-    title: "حاسبة العمر",
-    description: "احسب عمرك بدقة بالسنوات والشهور والأيام",
+    titleKey: "age-calculator.title",
+    descKey: "age-calculator.desc",
     icon: "fas fa-birthday-cake",
     color: "blue"
   },
   {
     id: "date-converter",
-    title: "تحويل التاريخ",
-    description: "تحويل بين التاريخ الهجري والميلادي",
+    titleKey: "date-converter.title",
+    descKey: "date-converter.desc",
     icon: "fas fa-calendar-alt",
     color: "emerald"
   },
   {
     id: "bmi-calculator",
-    title: "حاسبة BMI",
-    description: "احسب مؤشر كتلة الجسم والوزن المثالي",
+    titleKey: "bmi-calculator.title",
+    descKey: "bmi-calculator.desc",
     icon: "fas fa-weight",
     color: "amber"
   },
   {
     id: "percentage-calculator",
-    title: "حاسبة النسبة المئوية",
-    description: "احسب النسب المئوية بطرق مختلفة",
+    titleKey: "percentage-calculator.title",
+    descKey: "percentage-calculator.desc",
     icon: "fas fa-percentage",
     color: "purple"
   },
   {
     id: "random-generator",
-    title: "مولد الأرقام العشوائية",
-    description: "توليد أرقام عشوائية بين رقمين",
+    titleKey: "random-generator.title",
+    descKey: "random-generator.desc",
     icon: "fas fa-dice",
     color: "red"
   },
   {
     id: "countdown-timer",
-    title: "عداد تنازلي",
-    description: "عداد تنازلي لأي تاريخ أو وقت",
+    titleKey: "countdown-timer.title",
+    descKey: "countdown-timer.desc",
     icon: "fas fa-clock",
     color: "indigo"
   },
   {
     id: "date-difference",
-    title: "الفرق بين التواريخ",
-    description: "احسب الفرق بين تاريخين بالأيام",
+    titleKey: "date-difference.title",
+    descKey: "date-difference.desc",
     icon: "fas fa-calendar-check",
     color: "teal"
   },
   {
     id: "tax-calculator",
-    title: "حاسبة الضريبة",
-    description: "احسب السعر بعد إضافة الضريبة",
+    titleKey: "tax-calculator.title",
+    descKey: "tax-calculator.desc",
     icon: "fas fa-money-bill",
     color: "green"
   },
   {
     id: "sqrt-calculator",
-    title: "حاسبة الجذر التربيعي",
-    description: "احسب الجذر التربيعي لأي رقم",
+    titleKey: "sqrt-calculator.title",
+    descKey: "sqrt-calculator.desc",
     icon: "fas fa-square-root-alt",
     color: "orange"
   },
   {
     id: "gpa-calculator",
-    title: "حاسبة المعدل التراكمي",
-    description: "احسب معدلك التراكمي GPA",
+    titleKey: "gpa-calculator.title",
+    descKey: "gpa-calculator.desc",
     icon: "fas fa-graduation-cap",
     color: "pink"
   },
   {
     id: "unit-converter",
-    title: "محول الوحدات",
-    description: "تحويل بين وحدات القياس المختلفة",
+    titleKey: "unit-converter.title",
+    descKey: "unit-converter.desc",
     icon: "fas fa-exchange-alt",
     color: "cyan"
   },
   {
     id: "password-generator",
-    title: "مولد كلمات المرور",
-    description: "إنشاء كلمات مرور قوية وآمنة",
+    titleKey: "password-generator.title",
+    descKey: "password-generator.desc",
     icon: "fas fa-key",
     color: "gray"
   },
   {
     id: "qr-generator",
-    title: "مولد رمز QR",
-    description: "إنشاء رموز QR لأي نص أو رابط",
+    titleKey: "qr-generator.title",
+    descKey: "qr-generator.desc",
     icon: "fas fa-qrcode",
     color: "violet"
   },
   {
     id: "color-palette",
-    title: "منتقي الألوان",
-    description: "اختيار الألوان وتحويل بين أنظمة الألوان",
+    titleKey: "color-palette.title",
+    descKey: "color-palette.desc",
     icon: "fas fa-palette",
     color: "rose"
   }

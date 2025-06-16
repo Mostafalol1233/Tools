@@ -1,7 +1,9 @@
+import { useLanguage } from "@/contexts/LanguageContext";
+
 interface Tool {
   id: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descKey: string;
   icon: string;
   color: string;
 }
@@ -29,6 +31,8 @@ const colorClasses = {
 };
 
 export default function ToolCard({ tool, onClick }: ToolCardProps) {
+  const { t } = useLanguage();
+  
   return (
     <div 
       className="tool-card bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer animate-fade-in"
@@ -38,8 +42,8 @@ export default function ToolCard({ tool, onClick }: ToolCardProps) {
         <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors ${colorClasses[tool.color as keyof typeof colorClasses]}`}>
           <i className={`${tool.icon} text-2xl`}></i>
         </div>
-        <h3 className="text-lg font-semibold text-slate-800 mb-2">{tool.title}</h3>
-        <p className="text-slate-600 text-sm">{tool.description}</p>
+        <h3 className="text-lg font-semibold text-slate-800 mb-2">{t(tool.titleKey)}</h3>
+        <p className="text-slate-600 text-sm">{t(tool.descKey)}</p>
       </div>
     </div>
   );
