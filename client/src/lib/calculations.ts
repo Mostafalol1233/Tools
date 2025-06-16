@@ -157,14 +157,49 @@ export function convertUnits(value: number, fromUnit: string, toUnit: string, ca
       inch: 39.3701,
       foot: 3.28084,
       yard: 1.09361,
-      mile: 0.000621371
+      mile: 0.000621371,
+      nauticalMile: 0.000539957
     },
     weight: {
       kilogram: 1,
       gram: 1000,
       pound: 2.20462,
       ounce: 35.274,
-      ton: 0.001
+      ton: 0.001,
+      stone: 0.157473
+    },
+    volume: {
+      liter: 1,
+      milliliter: 1000,
+      gallon: 0.264172,
+      quart: 1.05669,
+      pint: 2.11338,
+      cup: 4.22675,
+      fluidOunce: 33.814,
+      tablespoon: 67.628,
+      teaspoon: 202.884,
+      cubicMeter: 0.001,
+      cubicCentimeter: 1000
+    },
+    area: {
+      squareMeter: 1,
+      squareKilometer: 0.000001,
+      squareCentimeter: 10000,
+      squareMillimeter: 1000000,
+      squareFoot: 10.7639,
+      squareInch: 1550.0031,
+      squareYard: 1.19599,
+      acre: 0.000247105,
+      hectare: 0.0001
+    },
+    numbers: {
+      units: 1,
+      tens: 0.1,
+      hundreds: 0.01,
+      thousands: 0.001,
+      tenThousands: 0.0001,
+      hundredThousands: 0.00001,
+      millions: 0.000001
     }
   };
 

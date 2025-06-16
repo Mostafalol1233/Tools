@@ -38,6 +38,67 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
   const [result, setResult] = useState<any>(null);
   const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timeout | null>(null);
   const [gpaCourses, setGpaCourses] = useState<GPACourse[]>([{ grade: 0, hours: 0 }]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('length');
+
+  const getUnitsForCategory = (category: string) => {
+    const unitOptions: { [key: string]: Array<{value: string, label: string}> } = {
+      length: [
+        { value: 'meter', label: 'متر' },
+        { value: 'kilometer', label: 'كيلومتر' },
+        { value: 'centimeter', label: 'سنتيمتر' },
+        { value: 'millimeter', label: 'مليمتر' },
+        { value: 'foot', label: 'قدم' },
+        { value: 'inch', label: 'بوصة' },
+        { value: 'yard', label: 'ياردة' },
+        { value: 'mile', label: 'ميل' },
+        { value: 'nauticalMile', label: 'ميل بحري' }
+      ],
+      weight: [
+        { value: 'kilogram', label: 'كيلوجرام' },
+        { value: 'gram', label: 'جرام' },
+        { value: 'pound', label: 'رطل' },
+        { value: 'ounce', label: 'أونصة' },
+        { value: 'ton', label: 'طن' },
+        { value: 'stone', label: 'ستون' }
+      ],
+      volume: [
+        { value: 'liter', label: 'لتر' },
+        { value: 'milliliter', label: 'مليلتر' },
+        { value: 'gallon', label: 'جالون' },
+        { value: 'quart', label: 'كوارت' },
+        { value: 'pint', label: 'باينت' },
+        { value: 'cup', label: 'كوب' },
+        { value: 'fluidOunce', label: 'أونصة سائلة' },
+        { value: 'cubicMeter', label: 'متر مكعب' },
+        { value: 'cubicCentimeter', label: 'سنتيمتر مكعب' }
+      ],
+      area: [
+        { value: 'squareMeter', label: 'متر مربع' },
+        { value: 'squareKilometer', label: 'كيلومتر مربع' },
+        { value: 'squareCentimeter', label: 'سنتيمتر مربع' },
+        { value: 'squareFoot', label: 'قدم مربع' },
+        { value: 'squareInch', label: 'بوصة مربعة' },
+        { value: 'squareYard', label: 'ياردة مربعة' },
+        { value: 'acre', label: 'فدان' },
+        { value: 'hectare', label: 'هكتار' }
+      ],
+      numbers: [
+        { value: 'units', label: 'آحاد' },
+        { value: 'tens', label: 'عشرات' },
+        { value: 'hundreds', label: 'مئات' },
+        { value: 'thousands', label: 'آلاف' },
+        { value: 'tenThousands', label: 'عشرات آلاف' },
+        { value: 'hundredThousands', label: 'مئات آلاف' },
+        { value: 'millions', label: 'ملايين' }
+      ],
+      temperature: [
+        { value: 'celsius', label: 'مئوية (°C)' },
+        { value: 'fahrenheit', label: 'فهرنهايت (°F)' },
+        { value: 'kelvin', label: 'كلفن (K)' }
+      ]
+    };
+    return unitOptions[category] || [];
+  };
 
   useEffect(() => {
     return () => {
@@ -675,28 +736,177 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
             }} className="space-y-4">
               <div>
                 <Label>فئة التحويل</Label>
-                <Select name="category" defaultValue="length">
+                <Select 
+                  name="category" 
+                  defaultValue="length"
+                  onValueChange={(value) => setSelectedCategory(value)}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="length">الطول</SelectItem>
-                    <SelectItem value="weight">الوزن</SelectItem>
+                    <SelectItem value="length">الطول والمسافة</SelectItem>
+                    <SelectItem value="weight">الوزن والكتلة</SelectItem>
+                    <SelectItem value="volume">الحجم والسعة</SelectItem>
+                    <SelectItem value="area">المساحة</SelectItem>
+                    <SelectItem value="numbers">الأرقام والعد</SelectItem>
                     <SelectItem value="temperature">درجة الحرارة</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>من</Label>
+                  <Select name="fromUnit" defaultValue={getUnitsForCategory(selectedCategory)[0]?.value}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getUnitsForCategory(selectedCategory).map((unit) => (
+                        <SelectItem key={unit.value} value={unit.value}>
+                          {unit.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>إلى</Label>
+                  <Select name="toUnit" defaultValue={getUnitsForCategory(selectedCategory)[1]?.value}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getUnitsForCategory(selectedCategory).map((unit) => (
+                        <SelectItem key={unit.value} value={unit.value}>
+                          {unit.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div>
                 <Label>القيمة</Label>
-                <Input type="number" name="value" placeholder="1" required />
+                <Input type="number" name="value" placeholder="1" step="any" required />
               </div>
-              <Button type="submit" className="w-full">تحويل</Button>
+              <Button type="submit" className="w-full">تحويل الوحدة</Button>
             </form>
+            
+            {/* أمثلة سريعة للتحويلات الشائعة */}
+            <div className="border-t pt-4 mt-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">تحويلات سريعة شائعة:</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {selectedCategory === 'length' && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => {
+                        const result = convertUnits(1, 'meter', 'foot', 'length');
+                        setResult(result);
+                      }}
+                    >
+                      1 متر = قدم
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const result = convertUnits(1, 'kilometer', 'mile', 'length');
+                        setResult(result);
+                      }}
+                    >
+                      1 كم = ميل
+                    </Button>
+                  </>
+                )}
+                {selectedCategory === 'weight' && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const result = convertUnits(1, 'kilogram', 'pound', 'weight');
+                        setResult(result);
+                      }}
+                    >
+                      1 كيلو = رطل
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const result = convertUnits(1, 'ton', 'kilogram', 'weight');
+                        setResult(result);
+                      }}
+                    >
+                      1 طن = كيلو
+                    </Button>
+                  </>
+                )}
+                {selectedCategory === 'numbers' && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const result = convertUnits(100, 'units', 'hundreds', 'numbers');
+                        setResult(result);
+                      }}
+                    >
+                      100 آحاد = مئات
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const result = convertUnits(1000, 'units', 'thousands', 'numbers');
+                        setResult(result);
+                      }}
+                    >
+                      1000 آحاد = آلاف
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
             {result && !result.error && (
               <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center space-y-4">
+                    <div className="text-3xl font-bold text-cyan-600">{result.result}</div>
+                    <div className="bg-cyan-50 rounded-lg p-4">
+                      <div className="text-lg font-semibold text-cyan-800 mb-2">
+                        {result.fromValue} {getUnitsForCategory(selectedCategory).find(u => u.value === result.fromUnit)?.label} 
+                        = {result.result} {getUnitsForCategory(selectedCategory).find(u => u.value === result.toUnit)?.label}
+                      </div>
+                      <div className="text-sm text-cyan-600">
+                        {selectedCategory === 'length' && 'تحويل المسافات والأطوال'}
+                        {selectedCategory === 'weight' && 'تحويل الأوزان والكتل'}
+                        {selectedCategory === 'volume' && 'تحويل الأحجام والسعات'}
+                        {selectedCategory === 'area' && 'تحويل المساحات'}
+                        {selectedCategory === 'numbers' && 'تحويل الأرقام والعد'}
+                        {selectedCategory === 'temperature' && 'تحويل درجات الحرارة'}
+                      </div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => navigator.clipboard.writeText(`${result.fromValue} ${getUnitsForCategory(selectedCategory).find(u => u.value === result.fromUnit)?.label} = ${result.result} ${getUnitsForCategory(selectedCategory).find(u => u.value === result.toUnit)?.label}`)}
+                    >
+                      <i className="fas fa-copy ml-2"></i>
+                      نسخ النتيجة
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {result && result.error && (
+              <Card className="border-red-200 bg-red-50">
                 <CardContent className="pt-6 text-center">
-                  <div className="text-2xl font-bold text-cyan-600 mb-2">{result.result}</div>
-                  <p className="text-cyan-700">{result.fromValue} {result.fromUnit} = {result.result} {result.toUnit}</p>
+                  <div className="text-red-600 font-semibold">{result.error}</div>
+                  <p className="text-sm text-red-500 mt-2">تأكد من اختيار وحدات متوافقة من نفس الفئة</p>
                 </CardContent>
               </Card>
             )}
