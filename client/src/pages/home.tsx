@@ -98,10 +98,10 @@ const tools: Tool[] = [
     color: "gray"
   },
   {
-    id: "qr-generator",
-    titleKey: "qr-generator.title",
-    descKey: "qr-generator.desc",
-    icon: "fas fa-qrcode",
+    id: "text-encoder",
+    titleKey: "text-encoder.title",
+    descKey: "text-encoder.desc",
+    icon: "fas fa-lock",
     color: "violet"
   },
   {

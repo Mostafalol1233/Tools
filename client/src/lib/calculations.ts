@@ -158,14 +158,42 @@ export function convertUnits(value: number, fromUnit: string, toUnit: string, ca
       millimeter: 1000,
       inch: 39.3701,
       foot: 3.28084,
-      yard: 1.09361
+      yard: 1.09361,
+      mile: 0.000621371,
+      nauticalMile: 0.000539957,
+      lightyear: 1.057e-16,
+      parsec: 3.24e-17,
+      furlong: 0.00497097,
+      rod: 0.198839,
+      chain: 0.0497097,
+      link: 4.97097,
+      hand: 9.84252,
+      span: 4.37445,
+      cubit: 2.18723,
+      fathom: 0.546807,
+      league: 0.000207124
     },
     weight: {
       kilogram: 1,
       gram: 1000,
       pound: 2.20462,
       ounce: 35.274,
-      ton: 0.001
+      ton: 0.001,
+      stone: 0.157473,
+      carat: 5000,
+      grain: 15432.4,
+      dram: 564.383,
+      hundredweight: 0.0196841,
+      quarter: 0.00787365,
+      slug: 0.0685218,
+      pennyweight: 643.015,
+      troy_ounce: 32.1507,
+      troy_pound: 2.67923,
+      atomic_mass: 6.022e26,
+      dalton: 6.022e26,
+      electronvolt: 5.61e35,
+      planck_mass: 4.59e7,
+      solar_mass: 5.03e-31
     }
   };
 
@@ -208,13 +236,36 @@ export function convertUnits(value: number, fromUnit: string, toUnit: string, ca
   return { error: 'تحويل غير مدعوم' };
 }
 
-export function generatePassword(length: number, options: { uppercase: boolean; lowercase: boolean; numbers: boolean; symbols: boolean }) {
+export function generatePassword(length: number, options: { uppercase: boolean; lowercase: boolean; numbers: boolean; symbols: boolean; useWords: boolean }) {
   const chars = {
     uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     lowercase: 'abcdefghijklmnopqrstuvwxyz',
     numbers: '0123456789',
     symbols: '!@#$%^&*()_+-=[]{}|;:,.<>?'
   };
+
+  const commonWords = [
+    'apple', 'cloud', 'house', 'ocean', 'mountain', 'bridge', 'garden', 'forest', 
+    'river', 'sunset', 'flower', 'castle', 'dragon', 'wizard', 'knight', 'tiger',
+    'eagle', 'dolphin', 'thunder', 'rainbow', 'crystal', 'silver', 'golden', 'diamond'
+  ];
+
+  if (options.useWords && length >= 8) {
+    // Generate word-based password
+    const word = commonWords[Math.floor(Math.random() * commonWords.length)];
+    const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
+    const numbers = Math.floor(Math.random() * 999) + 1;
+    const symbols = options.symbols ? chars.symbols[Math.floor(Math.random() * chars.symbols.length)] : '';
+    const password = capitalizedWord + numbers + symbols;
+    
+    return {
+      password,
+      strength: calculatePasswordStrength(password, length),
+      strengthText: getStrengthText(calculatePasswordStrength(password, length)),
+      length: password.length,
+      type: 'word-based'
+    };
+  }
 
   let characterPool = '';
   if (options.uppercase) characterPool += chars.uppercase;
@@ -231,40 +282,142 @@ export function generatePassword(length: number, options: { uppercase: boolean; 
     password += characterPool.charAt(Math.floor(Math.random() * characterPool.length));
   }
 
-  // Calculate password strength
-  let strength = 0;
-  if (password.length >= 8) strength += 25;
-  if (password.length >= 12) strength += 25;
-  if (/[A-Z]/.test(password)) strength += 12.5;
-  if (/[a-z]/.test(password)) strength += 12.5;
-  if (/[0-9]/.test(password)) strength += 12.5;
-  if (/[^A-Za-z0-9]/.test(password)) strength += 12.5;
-
-  const strengthText = strength >= 80 ? 'قوية جداً' : 
-                      strength >= 60 ? 'قوية' : 
-                      strength >= 40 ? 'متوسطة' : 'ضعيفة';
+  const strength = calculatePasswordStrength(password, length);
 
   return {
     password,
-    strength: Math.round(strength),
-    strengthText,
-    length: password.length
+    strength,
+    strengthText: getStrengthText(strength),
+    length: password.length,
+    type: 'random'
   };
 }
 
-export function generateQRData(text: string) {
-  // Simple QR placeholder - in production you'd use a QR library
-  return {
-    text,
-    dataUrl: `data:image/svg+xml;base64,${btoa(`
-      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-        <rect width="200" height="200" fill="white"/>
-        <text x="100" y="100" text-anchor="middle" font-size="12" fill="black">QR Code</text>
-        <text x="100" y="120" text-anchor="middle" font-size="10" fill="gray">${text.slice(0, 20)}</text>
-      </svg>
-    `)}`,
-    note: 'هذا مثال توضيحي - في التطبيق الحقيقي سيتم استخدام مكتبة QR مخصصة'
-  };
+function calculatePasswordStrength(password: string, minLength: number): number {
+  let strength = 0;
+  
+  // Length scoring
+  if (password.length >= 8) strength += 20;
+  if (password.length >= 12) strength += 15;
+  if (password.length >= 16) strength += 10;
+  
+  // Character variety
+  if (/[A-Z]/.test(password)) strength += 15;
+  if (/[a-z]/.test(password)) strength += 15;
+  if (/[0-9]/.test(password)) strength += 15;
+  if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+  
+  // Penalty for common patterns
+  if (/(.)\1{2,}/.test(password)) strength -= 10; // Repeated characters
+  if (/123|abc|qwe/i.test(password)) strength -= 15; // Sequential patterns
+  
+  return Math.min(100, Math.max(0, strength));
+}
+
+function getStrengthText(strength: number): string {
+  if (strength >= 90) return 'ممتازة';
+  if (strength >= 75) return 'قوية جداً';
+  if (strength >= 60) return 'قوية';
+  if (strength >= 40) return 'متوسطة';
+  if (strength >= 25) return 'ضعيفة';
+  return 'ضعيفة جداً';
+}
+
+export function encodeText(text: string, method: string) {
+  switch (method) {
+    case 'caesar':
+      // Caesar cipher (shift by 3)
+      return text.split('').map(char => {
+        if (char.match(/[a-z]/i)) {
+          const code = char.charCodeAt(0);
+          const base = code >= 65 && code <= 90 ? 65 : 97;
+          return String.fromCharCode(((code - base + 3) % 26) + base);
+        }
+        return char;
+      }).join('');
+    
+    case 'lol':
+      // LOL cipher (letters to numbers)
+      return text.split('').map(char => {
+        if (char.match(/[a-z]/i)) {
+          return char.toLowerCase().charCodeAt(0) - 96;
+        }
+        return char;
+      }).join('-');
+    
+    case 'base64':
+      return btoa(text);
+    
+    case 'reverse':
+      return text.split('').reverse().join('');
+    
+    case 'atbash':
+      // Atbash cipher (A=Z, B=Y, etc.)
+      return text.split('').map(char => {
+        if (char.match(/[a-z]/i)) {
+          const code = char.charCodeAt(0);
+          const isUpper = code >= 65 && code <= 90;
+          const base = isUpper ? 65 : 97;
+          const newChar = String.fromCharCode((25 - (code - base)) + base);
+          return newChar;
+        }
+        return char;
+      }).join('');
+    
+    default:
+      return text;
+  }
+}
+
+export function decodeText(text: string, method: string) {
+  switch (method) {
+    case 'caesar':
+      // Caesar cipher decode (shift by -3)
+      return text.split('').map(char => {
+        if (char.match(/[a-z]/i)) {
+          const code = char.charCodeAt(0);
+          const base = code >= 65 && code <= 90 ? 65 : 97;
+          return String.fromCharCode(((code - base - 3 + 26) % 26) + base);
+        }
+        return char;
+      }).join('');
+    
+    case 'lol':
+      // LOL cipher decode
+      return text.split('-').map(part => {
+        const num = parseInt(part);
+        if (num >= 1 && num <= 26) {
+          return String.fromCharCode(num + 96);
+        }
+        return part;
+      }).join('');
+    
+    case 'base64':
+      try {
+        return atob(text);
+      } catch {
+        return 'خطأ في فك التشفير';
+      }
+    
+    case 'reverse':
+      return text.split('').reverse().join('');
+    
+    case 'atbash':
+      // Atbash is its own inverse
+      return text.split('').map(char => {
+        if (char.match(/[a-z]/i)) {
+          const code = char.charCodeAt(0);
+          const isUpper = code >= 65 && code <= 90;
+          const base = isUpper ? 65 : 97;
+          const newChar = String.fromCharCode((25 - (code - base)) + base);
+          return newChar;
+        }
+        return char;
+      }).join('');
+    
+    default:
+      return text;
+  }
 }
 
 export function convertColor(color: string, fromFormat: string, toFormat: string) {

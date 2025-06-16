@@ -17,7 +17,8 @@ import {
   calculateGPA,
   convertUnits,
   generatePassword,
-  generateQRData,
+  encodeText,
+  decodeText,
   convertColor
 } from "@/lib/calculations";
 
@@ -703,7 +704,7 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
       case "password-generator":
         return (
           <div className="space-y-4">
-            <form onSubmit={(e) => {
+            <form onSubmit={async (e) => {
               e.preventDefault();
               const formData = new FormData(e.target as HTMLFormElement);
               const length = parseInt(formData.get("length") as string) || 12;
@@ -711,8 +712,15 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
                 uppercase: formData.get("uppercase") === "on",
                 lowercase: formData.get("lowercase") === "on" || true,
                 numbers: formData.get("numbers") === "on",
-                symbols: formData.get("symbols") === "on"
+                symbols: formData.get("symbols") === "on",
+                useWords: formData.get("useWords") === "on"
               };
+              
+              // Show loading state
+              setResult({ loading: true });
+              
+              // 3-second delay for security
+              await new Promise(resolve => setTimeout(resolve, 3000));
               
               const passwordResult = generatePassword(length, options);
               setResult(passwordResult);
@@ -722,6 +730,10 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
                 <Input type="number" name="length" min="4" max="50" defaultValue="12" />
               </div>
               <div className="space-y-2">
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <input type="checkbox" name="useWords" id="useWords" />
+                  <Label htmlFor="useWords">استخدام كلمات معروفة (أكثر أماناً)</Label>
+                </div>
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <input type="checkbox" name="uppercase" id="uppercase" defaultChecked />
                   <Label htmlFor="uppercase">أحرف كبيرة (A-Z)</Label>
@@ -739,25 +751,51 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
                   <Label htmlFor="symbols">رموز (!@#$%)</Label>
                 </div>
               </div>
-              <Button type="submit" className="w-full">إنشاء كلمة مرور</Button>
+              <Button type="submit" className="w-full">إنشاء كلمة مرور آمنة</Button>
             </form>
-            {result && !result.error && (
+            {result && result.loading && (
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="animate-spin w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full mx-auto mb-4"></div>
+                  <p className="text-blue-600">جاري إنشاء كلمة مرور آمنة...</p>
+                  <p className="text-sm text-gray-500 mt-2">يتم تطبيق خوارزميات الأمان (3 ثوانِ)</p>
+                </CardContent>
+              </Card>
+            )}
+            {result && !result.error && !result.loading && (
               <Card>
                 <CardContent className="pt-6">
                   <div className="bg-gray-50 p-4 rounded-lg mb-4">
                     <div className="font-mono text-lg text-center break-all">{result.password}</div>
                   </div>
-                  <div className="text-center">
+                  <div className="text-center space-y-3">
                     <div className={`text-lg font-semibold ${
-                      result.strength >= 80 ? 'text-green-600' :
+                      result.strength >= 90 ? 'text-emerald-600' :
+                      result.strength >= 75 ? 'text-green-600' :
                       result.strength >= 60 ? 'text-blue-600' :
-                      result.strength >= 40 ? 'text-yellow-600' : 'text-red-600'
+                      result.strength >= 40 ? 'text-yellow-600' :
+                      result.strength >= 25 ? 'text-orange-600' : 'text-red-600'
                     }`}>
                       قوة كلمة المرور: {result.strengthText} ({result.strength}%)
                     </div>
+                    <div className="bg-gray-100 rounded-lg p-3 text-sm">
+                      <p><strong>النوع:</strong> {result.type === 'word-based' ? 'مبنية على كلمات' : 'عشوائية'}</p>
+                      <p><strong>الطول:</strong> {result.length} حرف</p>
+                      <div className="mt-2">
+                        <div className="bg-gray-200 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all ${
+                              result.strength >= 75 ? 'bg-green-500' :
+                              result.strength >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${result.strength}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
                     <Button 
                       variant="outline" 
-                      className="mt-3"
+                      className="w-full"
                       onClick={() => navigator.clipboard.writeText(result.password)}
                     >
                       <i className="fas fa-copy ml-2"></i>
@@ -770,41 +808,93 @@ export default function CalculatorModal({ toolId, onClose }: CalculatorModalProp
           </div>
         );
 
-      case "qr-generator":
+      case "text-encoder":
         return (
           <div className="space-y-4">
             <form onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.target as HTMLFormElement);
               const text = formData.get("text") as string;
+              const method = formData.get("method") as string;
+              const operation = formData.get("operation") as string;
               
               if (!text.trim()) {
-                alert("يرجى إدخال النص أو الرابط");
+                alert("يرجى إدخال النص");
                 return;
               }
               
-              const qrResult = generateQRData(text);
-              setResult(qrResult);
+              let processedText;
+              if (operation === 'encode') {
+                processedText = encodeText(text, method);
+              } else {
+                processedText = decodeText(text, method);
+              }
+              
+              setResult({
+                original: text,
+                processed: processedText,
+                method,
+                operation
+              });
             }} className="space-y-4">
               <div>
-                <Label>النص أو الرابط</Label>
+                <Label>النص المراد معالجته</Label>
                 <Input 
                   name="text" 
-                  placeholder="https://example.com أو أي نص آخر" 
+                  placeholder="أدخل النص هنا..."
                   required 
                 />
               </div>
-              <Button type="submit" className="w-full">إنشاء رمز QR</Button>
+              <div>
+                <Label>نوع التشفير</Label>
+                <Select name="method" defaultValue="caesar">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="caesar">قيصر (Caesar)</SelectItem>
+                    <SelectItem value="lol">LOL (حروف لأرقام)</SelectItem>
+                    <SelectItem value="base64">Base64</SelectItem>
+                    <SelectItem value="reverse">عكس النص</SelectItem>
+                    <SelectItem value="atbash">أتباش (Atbash)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>العملية</Label>
+                <Select name="operation" defaultValue="encode">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="encode">تشفير</SelectItem>
+                    <SelectItem value="decode">فك التشفير</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button type="submit" className="w-full">معالجة النص</Button>
             </form>
             {result && (
               <Card>
-                <CardContent className="pt-6 text-center">
-                  <div className="mb-4">
-                    <img src={result.dataUrl} alt="QR Code" className="mx-auto border rounded" />
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-semibold text-violet-700">النص الأصلي:</Label>
+                      <div className="bg-gray-50 p-3 rounded border text-sm break-all">{result.original}</div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-semibold text-violet-700">النتيجة ({result.method} - {result.operation === 'encode' ? 'تشفير' : 'فك تشفير'}):</Label>
+                      <div className="bg-violet-50 p-3 rounded border text-sm break-all font-mono">{result.processed}</div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => navigator.clipboard.writeText(result.processed)}
+                    >
+                      <i className="fas fa-copy ml-2"></i>
+                      نسخ النتيجة
+                    </Button>
                   </div>
-                  <p className="text-violet-700 mb-2">تم إنشاء رمز QR للنص:</p>
-                  <p className="text-sm text-gray-600 break-all">{result.text}</p>
-                  <p className="text-xs text-violet-500 mt-3">{result.note}</p>
                 </CardContent>
               </Card>
             )}

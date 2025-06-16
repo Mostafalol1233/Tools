@@ -40,8 +40,8 @@ const translations = {
     'unit-converter.desc': 'تحويل بين وحدات القياس المختلفة',
     'password-generator.title': 'مولد كلمات المرور',
     'password-generator.desc': 'إنشاء كلمات مرور قوية وآمنة',
-    'qr-generator.title': 'مولد رمز QR',
-    'qr-generator.desc': 'إنشاء رموز QR لأي نص أو رابط',
+    'text-encoder.title': 'مشفر النصوص',
+    'text-encoder.desc': 'تشفير وفك تشفير النصوص بطرق مختلفة',
     'color-palette.title': 'منتقي الألوان',
     'color-palette.desc': 'اختيار الألوان وتحويل بين أنظمة الألوان',
     
@@ -84,8 +84,8 @@ const translations = {
     'unit-converter.desc': 'Convert between different units of measurement',
     'password-generator.title': 'Password Generator',
     'password-generator.desc': 'Generate strong and secure passwords',
-    'qr-generator.title': 'QR Code Generator',
-    'qr-generator.desc': 'Generate QR codes for any text or link',
+    'text-encoder.title': 'Text Encoder',
+    'text-encoder.desc': 'Encrypt and decrypt text using various methods',
     'color-palette.title': 'Color Picker',
     'color-palette.desc': 'Pick colors and convert between color systems',
     
