@@ -1,4 +1,20 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://your-domain.com/sitemap.xml
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Block access to API endpoints and admin routes
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow all calculator tools
+Allow: /tools/
+Allow: /calculator/
+
+# Sitemap location
+Sitemap: https://arabic-calculator-tools.vercel.app/sitemap.xml
+
+# Host specification
+Host: https://arabic-calculator-tools.vercel.app
