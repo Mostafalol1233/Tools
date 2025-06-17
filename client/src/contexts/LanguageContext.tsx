@@ -11,9 +11,17 @@ interface LanguageContextType {
 const translations = {
   ar: {
     // Header
-    'site.title': 'أدوات حسابية يومية',
+    'site.title': 'BMO Tools - أدوات حسابية يومية',
     'site.description': 'مجموعة شاملة من الأدوات الحسابية المجانية للاستخدام اليومي',
+    'site.subtitle': 'أدوات BMO',
     'tools.select': 'اختر الأداة المناسبة لك',
+    
+    // About Mostafa
+    'about.mostafa.name': 'مصطفى محمد',
+    'about.mostafa.title': 'مطور Full-Stack محترف ومختص في الذكاء الاصطناعي',
+    'about.mostafa.description': 'أقوم بإنشاء حلول رقمية مبتكرة تدفع نجاح الأعمال',
+    'about.mostafa.website': 'موقعي الإلكتروني',
+    'about.mostafa.linkTree': 'شجرة الروابط',
     
     // Tools
     'age-calculator.title': 'حاسبة العمر',
@@ -55,9 +63,17 @@ const translations = {
   },
   en: {
     // Header
-    'site.title': 'Daily Calculator Tools',
+    'site.title': 'BMO Tools - Daily Calculator Tools',
     'site.description': 'A comprehensive collection of free calculator tools for daily use',
+    'site.subtitle': 'BMO Tools',
     'tools.select': 'Choose the right tool for you',
+    
+    // About Mostafa
+    'about.mostafa.name': 'Mostafa Mohamed',
+    'about.mostafa.title': 'Professional Full-Stack Developer & AI Specialist',
+    'about.mostafa.description': 'Creating innovative digital solutions that drive business success',
+    'about.mostafa.website': 'My Website',
+    'about.mostafa.linkTree': 'Link Tree',
     
     // Tools
     'age-calculator.title': 'Age Calculator',

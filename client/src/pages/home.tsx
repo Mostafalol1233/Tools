@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import ToolCard from "@/components/tool-card";
 import CalculatorModal from "@/components/calculator-modal";
 import SEOSchema from "@/components/seo-schema";
 import MetaTags from "@/components/meta-tags";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { User, ExternalLink } from "lucide-react";
 
 interface Tool {
   id: string;
@@ -144,17 +146,28 @@ export default function Home() {
                 {t('site.title')}
               </h1>
               <p className="text-slate-600 text-lg">{t('site.description')}</p>
+              <p className="text-blue-600 text-sm font-medium mt-1">{t('site.subtitle')}</p>
             </div>
             
-            {/* Language Toggle */}
-            <Button
-              onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <i className="fas fa-language"></i>
-              {t('lang.switch')}
-            </Button>
+            <div className="flex items-center gap-3">
+              {/* About Link */}
+              <Button asChild variant="outline" size="sm">
+                <Link href="/about" className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  {t('about.mostafa.name')}
+                </Link>
+              </Button>
+              
+              {/* Language Toggle */}
+              <Button
+                onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <i className="fas fa-language"></i>
+                {t('lang.switch')}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
