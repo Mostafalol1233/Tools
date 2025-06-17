@@ -137,7 +137,7 @@ export default function Home() {
       </div>
 
       {/* Header */}
-      <header className="bg-white shadow-lg sticky top-0 z-40">
+      <header className="bg-white shadow-lg fixed top-0 left-0 right-0 z-50">
         <div className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
             <div className="text-center flex-1">
@@ -150,14 +150,6 @@ export default function Home() {
             </div>
             
             <div className="flex items-center gap-3">
-              {/* About Link */}
-              <Button asChild variant="outline" size="sm">
-                <Link href="/about" className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  {t('about.mostafa.name')}
-                </Link>
-              </Button>
-              
               {/* Language Toggle */}
               <Button
                 onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
@@ -173,7 +165,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 pt-32">
         
         {/* Tools Grid */}
         <section className="mb-12">
@@ -204,22 +196,21 @@ export default function Home() {
       <section id="about" className="bg-white py-12 border-t border-gray-200">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-slate-800 mb-6">من نحن</h2>
+            <h2 className="text-3xl font-bold text-slate-800 mb-6">{t('about.title')}</h2>
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
               <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto mb-6 flex items-center justify-center">
                 <i className="fas fa-user text-white text-4xl"></i>
               </div>
-              <h3 className="text-2xl font-semibold text-slate-800 mb-2">مصطفى</h3>
-              <p className="text-blue-600 font-medium mb-4">مطور ويب ومصمم واجهات</p>
+              <h3 className="text-2xl font-semibold text-slate-800 mb-2">{t('about.mostafa.name')}</h3>
+              <p className="text-blue-600 font-medium mb-4">{t('about.mostafa.title')}</p>
               <p className="text-slate-600 leading-relaxed mb-6">
-                مرحباً! أنا مصطفى، مطور ويب متخصص في إنشاء أدوات مفيدة وعملية للمستخدمين العرب. 
-                أسعى لتقديم حلول تقنية بسيطة وفعالة تساعد في الحياة اليومية.
+                {t('about.mostafa.description')}
               </p>
               <div className="flex justify-center space-x-4 space-x-reverse">
                 <a href="https://mustaf.vercel.app/" target="_blank" rel="noopener noreferrer"
                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center">
                   <i className="fas fa-globe ml-2"></i>
-                  زيارة موقعي الشخصي
+                  {t('about.mostafa.website')}
                 </a>
                 <a href="#" className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-lg transition-colors duration-200 flex items-center">
                   <i className="fas fa-tree ml-2"></i>
@@ -235,23 +226,23 @@ export default function Home() {
       <section id="contact" className="bg-slate-800 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">اتصل بنا</h2>
-            <p className="text-slate-300 mb-8">هل لديك اقتراح لأداة جديدة أو تحسين؟ نحن نحب سماع آرائكم!</p>
+            <h2 className="text-3xl font-bold mb-6">{t('contact.title')}</h2>
+            <p className="text-slate-300 mb-8">{t('contact.description')}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors">
                 <i className="fas fa-envelope text-blue-400 text-2xl mb-3"></i>
-                <h3 className="font-semibold mb-2">البريد الإلكتروني</h3>
+                <h3 className="font-semibold mb-2">{t('contact.email.title')}</h3>
                 <p className="text-slate-300 text-sm">contact@mustaf.vercel.app</p>
               </div>
-              <div className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors">
-                <i className="fas fa-code text-green-400 text-2xl mb-3"></i>
-                <h3 className="font-semibold mb-2">GitHub</h3>
-                <p className="text-slate-300 text-sm">تابع مشاريعنا المفتوحة</p>
-              </div>
+              <a href="https://bemora.vercel.app" target="_blank" rel="noopener noreferrer" className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors block">
+                <i className="fas fa-globe text-green-400 text-2xl mb-3"></i>
+                <h3 className="font-semibold mb-2">{t('contact.website.title')}</h3>
+                <p className="text-slate-300 text-sm">{t('contact.website.description')}</p>
+              </a>
               <div className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors">
                 <i className="fas fa-comments text-purple-400 text-2xl mb-3"></i>
-                <h3 className="font-semibold mb-2">الملاحظات</h3>
-                <p className="text-slate-300 text-sm">شاركنا تجربتك واقتراحاتك</p>
+                <h3 className="font-semibold mb-2">{t('contact.feedback.title')}</h3>
+                <p className="text-slate-300 text-sm">{t('contact.feedback.description')}</p>
               </div>
             </div>
           </div>
@@ -262,13 +253,13 @@ export default function Home() {
       <footer className="bg-slate-900 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <div className="mb-4">
-            <h3 className="text-xl font-semibold mb-2">أدوات حسابية يومية</h3>
-            <p className="text-slate-400">أدوات مجانية ومفيدة للجميع</p>
+            <h3 className="text-xl font-semibold mb-2">{t('footer.title')}</h3>
+            <p className="text-slate-400">{t('footer.subtitle')}</p>
           </div>
           <div className="border-t border-slate-700 pt-4">
             <p className="text-slate-400 text-sm">
-              &copy; 2024 جميع الحقوق محفوظة | تم التطوير بواسطة 
-              <a href="https://mustaf.vercel.app/" className="text-blue-400 hover:text-blue-300 mr-1">مصطفى</a>
+              {t('footer.copyright')} | {t('footer.developed')} 
+              <a href="https://mustaf.vercel.app/" className="text-blue-400 hover:text-blue-300 mr-1">{t('about.mostafa.name')}</a>
             </p>
           </div>
         </div>

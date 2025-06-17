@@ -56,6 +56,16 @@ const translations = {
     // Sections
     'about.title': 'من نحن',
     'contact.title': 'اتصل بنا',
+    'contact.description': 'هل لديك اقتراح لأداة جديدة أو تحسين؟ نحن نحب سماع آرائكم!',
+    'contact.email.title': 'البريد الإلكتروني',
+    'contact.website.title': 'موقع بيمورا',
+    'contact.website.description': 'زيارة موقعي الشخصي',
+    'contact.feedback.title': 'الملاحظات',
+    'contact.feedback.description': 'شاركنا تجربتك واقتراحاتك',
+    'footer.title': 'أدوات حسابية يومية',
+    'footer.subtitle': 'أدوات مجانية ومفيدة للجميع',
+    'footer.copyright': '© 2024 جميع الحقوق محفوظة',
+    'footer.developed': 'تم التطوير بواسطة',
     'ads.text': 'منطقة إعلانية - يمكن وضع Google AdSense هنا',
     
     // Language toggle
@@ -108,6 +118,16 @@ const translations = {
     // Sections
     'about.title': 'About Us',
     'contact.title': 'Contact Us',
+    'contact.description': 'Do you have a suggestion for a new tool or improvement? We love hearing from you!',
+    'contact.email.title': 'Email',
+    'contact.website.title': 'Bemora Website',
+    'contact.website.description': 'Visit my personal website',
+    'contact.feedback.title': 'Feedback',
+    'contact.feedback.description': 'Share your experience and suggestions',
+    'footer.title': 'Daily Calculator Tools',
+    'footer.subtitle': 'Free and useful tools for everyone',
+    'footer.copyright': '© 2024 All rights reserved',
+    'footer.developed': 'Developed by',
     'ads.text': 'Advertisement Area - Google AdSense can be placed here',
     
     // Language toggle
@@ -121,7 +141,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('ar');
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations['ar']] || key;
+    return (translations[language] as any)[key] || key;
   };
 
   const contextValue = {
