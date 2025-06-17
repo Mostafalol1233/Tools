@@ -1,10 +1,28 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   const { pathname } = new URL(req.url || '', `http://${req.headers.host}`);
   
+  // Health check endpoint
+  if (pathname === '/api/health') {
+    return res.status(200).json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      service: 'BMO Tools API'
+    });
+  }
+  
   // Handle robots.txt
-  if (pathname === '/robots' || pathname === '/api/robots') {
+  if (pathname === '/robots.txt' || pathname === '/robots' || pathname === '/api/robots') {
     const robotsTxt = `User-agent: *
 Allow: /
 
@@ -31,7 +49,7 @@ Host: ${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}`;
   }
 
   // Handle sitemap.xml
-  if (pathname === '/sitemap' || pathname === '/api/sitemap') {
+  if (pathname === '/sitemap.xml' || pathname === '/sitemap' || pathname === '/api/sitemap') {
     const baseUrl = `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}`;
     const currentDate = new Date().toISOString().split('T')[0];
     
@@ -40,14 +58,16 @@ Host: ${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}`;
       'bmi-calculator', 
       'unit-converter',
       'password-generator',
-      'bmo-encryption',
-      'cipher-detector',
+      'text-encoder',
+      'color-palette',
       'percentage-calculator',
-      'random-number-generator',
+      'random-generator',
+      'countdown-timer',
       'date-difference',
       'tax-calculator',
-      'square-root',
-      'gpa-calculator'
+      'sqrt-calculator',
+      'gpa-calculator',
+      'date-converter'
     ];
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -60,6 +80,12 @@ Host: ${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}`;
     <lastmod>${currentDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/about</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 ${tools.map(tool => `  <url>
     <loc>${baseUrl}/tools/${tool}</loc>

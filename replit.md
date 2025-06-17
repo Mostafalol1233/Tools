@@ -118,6 +118,7 @@ Currently defined schema includes:
 - **Responsive Design**: Optimized for mobile and desktop with modern CSS grid layouts
 
 ## Changelog
+- June 17, 2025. Fixed Vercel deployment conflict by removing duplicate API files and consolidating functionality into single TypeScript handler
 - June 16, 2025. Initial setup
 - December 16, 2024. Enhanced countdown timer, added 4 new tools, implemented multilingual support
 
