@@ -79,12 +79,29 @@ Currently defined schema includes:
 
 ## Deployment Strategy
 
+### Multi-Platform Deployment Support
+The application supports deployment to multiple platforms with platform-specific configurations:
+
 ### Replit Configuration
 - **Environment**: Node.js 20, PostgreSQL 16, Web modules
 - **Development**: `npm run dev` starts both client and server with hot reloading
 - **Production Build**: Vite builds client assets, ESBuild bundles server
 - **Port Configuration**: Server runs on port 5000, exposed as port 80
 - **Auto-scaling**: Configured for automatic scaling based on demand
+
+### Vercel Configuration
+- **API Handler**: Single TypeScript file (`api/index.ts`) with consolidated functionality
+- **Build Command**: `npm run build` 
+- **Output**: Static files served from `dist/public`
+- **Features**: CORS headers, health check, robots.txt, sitemap.xml generation
+
+### Netlify Configuration  
+- **Build Command**: `npm run build` (frontend only)
+- **Publish Directory**: `dist/public`
+- **Functions Directory**: `netlify/functions`
+- **Serverless Functions**: Separate handlers for health, robots, sitemap, and API endpoints
+- **Redirects**: SPA routing with automatic API mapping via `_redirects` file
+- **Performance**: Asset caching, global CDN, automatic compression
 
 ### Build Process
 1. **Development**: Vite dev server with Express backend integration
@@ -118,6 +135,7 @@ Currently defined schema includes:
 - **Responsive Design**: Optimized for mobile and desktop with modern CSS grid layouts
 
 ## Changelog
+- June 17, 2025. Added Netlify deployment support with serverless functions, comprehensive deployment guide, and multi-platform configuration
 - June 17, 2025. Fixed Vercel deployment conflict by removing duplicate API files and consolidating functionality into single TypeScript handler
 - June 16, 2025. Initial setup
 - December 16, 2024. Enhanced countdown timer, added 4 new tools, implemented multilingual support

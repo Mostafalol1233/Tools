@@ -1,0 +1,10 @@
+# API endpoints
+/api/health /.netlify/functions/health 200
+/api/* /.netlify/functions/api/:splat 200
+
+# SEO files
+/robots.txt /.netlify/functions/robots 200
+/sitemap.xml /.netlify/functions/sitemap 200
+
+# SPA fallback - must be last
+/* /index.html 200
