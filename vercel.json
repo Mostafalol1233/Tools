@@ -6,7 +6,8 @@
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
-          "shared/**"
+          "shared/**",
+          "server/**"
         ]
       }
     },
@@ -14,7 +15,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/client"
+        "distDir": "dist"
       }
     }
   ],
@@ -25,22 +26,17 @@
     },
     {
       "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
-      "dest": "/dist/client/$1",
+      "dest": "/dist/$1",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
       }
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/client/index.html"
+      "dest": "/dist/index.html"
     }
   ],
-  "functions": {
-    "server/index.ts": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
+
   "headers": [
     {
       "source": "/(.*)",
