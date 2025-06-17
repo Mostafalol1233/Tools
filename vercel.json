@@ -2,13 +2,16 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "framework": null,
-  "nodeVersion": "18.x",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "@vercel/node@3.0.5"
+  "rewrites": [
+    {
+      "source": "/robots.txt",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/sitemap.xml", 
+      "destination": "/api/index"
     }
-  },
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -77,27 +80,6 @@
           "value": "public, max-age=86400"
         }
       ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/home",
-      "destination": "/",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/api/robots"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index"
     }
   ]
 }
