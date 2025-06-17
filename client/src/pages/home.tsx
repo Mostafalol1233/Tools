@@ -1,6 +1,8 @@
 import { useState } from "react";
 import ToolCard from "@/components/tool-card";
 import CalculatorModal from "@/components/calculator-modal";
+import SEOSchema from "@/components/seo-schema";
+import MetaTags from "@/components/meta-tags";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 
@@ -118,7 +120,10 @@ export default function Home() {
   const { t, language, setLanguage } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <>
+      <MetaTags />
+      <SEOSchema type="website" />
+      <div className="min-h-screen bg-slate-50">
       {/* Advertisement Area Top */}
       <div className="bg-gray-100 border-b border-gray-200 py-2">
         <div className="container mx-auto px-4 text-center">
@@ -264,5 +269,6 @@ export default function Home() {
         />
       )}
     </div>
+    </>
   );
 }
